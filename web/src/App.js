@@ -15,20 +15,33 @@ export default function App() {
     })
 
 
+    return () => {
+      socketVar.disconnect()
+    }
+
+
   }, [])
 
   useEffect(() => {
     if (!socket) {
       return
     }
-    socket.on('changed_data', data => {
-      setTodos(data)
-    })
+    try {
+      socket.on('changed_data', (data) => {
+        setTodos(data)
+      })
+    }
+    catch (e) {
+      throw new Error(e)
+    }
+
   }, [socket])
+
 
 
   const addTodo = (e) => {
     e.preventDefault()
+
     socket.emit('add_todo', {
       id: todos.length + 1,
       todo: todo,
@@ -66,8 +79,8 @@ export default function App() {
         }
         return <li key={index} className={todo.completed ? 'border-green' : "border-red"}><div className="todoContainer"> {todo.id}. {todo.todo}</div>
           <div className="icons-section">
-            <div className="correct-icon" onClick={completeTodo}><i style={{ color: "yellowgreen" }} class="fas fa-check-circle"></i></div>
-            <div className="remove-icon" onClick={deleteTodo}><i style={{ color: "red" }} class="fas fa-trash"></i></div>
+            <div className="correct-icon" onClick={completeTodo}><i style={{ color: "yellowgreen" }} className="fas fa-check-circle"></i></div>
+            <div className="remove-icon" onClick={deleteTodo}><i style={{ color: "red" }} className="fas fa-trash"></i></div>
           </div>
         </li>
       })}
